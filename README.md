@@ -1,5 +1,15 @@
 # VeRoLog 2019
 
+# Parser
+
+```
+python3 parser.py input.txt output.dzn
+```
+
+```
+python3 parser.py VSC2019_EX01.txt ex1.dzn
+```
+
 # Constraints
 ## Delivery Constraints
 * delivery window (P)
