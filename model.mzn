@@ -40,7 +40,7 @@ var int: IDLE_MACHINE_COSTS;
 % TODO (?)
 
 % CUSTOM FUNCTIONS
-function float: distance(int:a, int:b) = (
+function float: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
   sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) )
 );
 
