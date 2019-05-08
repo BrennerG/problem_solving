@@ -15,11 +15,13 @@ requests = 150;
 technicians = 50;
 
 machines_attr = { idm, size, penalty};
-machines_data = [| 1, 6, 343,
+machines_data = [| 
+1, 6, 343,
 | 2, 5, 88 |];
 
 locations_attr = {idl, x, y};
-locations_data = [| 1, 699, 335,
+locations_data = [| 
+1, 699, 335,
 | 2, 473, 376,
 | 3, 546, 621,
 | 4, 309, 257,
@@ -75,7 +77,8 @@ locations_data = [| 1, 699, 335,
 | 54, 347, 36 |];
 
 requests_attr = {idr, customer_location, delivery_start, delivery_end, machine_kind, number_of_machines};
-requests_data = [| 1, 8, 1, 6, 1, 1,
+requests_data = [| 
+1, 8, 1, 6, 1, 1,
 | 2, 46, 1, 2, 1, 1,
 | 3, 12, 1, 3, 1, 2,
 | 4, 29, 1, 3, 1, 1,
@@ -228,7 +231,8 @@ requests_data = [| 1, 8, 1, 6, 1, 1,
 
 % TODO make this dynamic somehow...
 technicians_attr = {idt, home_location, max_travel, max_requests, skill1, skill2};
-technicians_data = [| 1, 40, 529, 9, 0, 1,
+technicians_data = [| 
+1, 40, 529, 9, 0, 1,
 | 2, 1, 995, 9, 0, 1,
 | 3, 1, 1280, 7, 0, 1,
 | 4, 1, 1311, 9, 1, 1,

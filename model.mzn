@@ -23,8 +23,8 @@ array[int, locations_attr] of int: locations_data;
 array[int, requests_attr] of int: requests_data;
 array[int, technicians_attr] of int: technicians_data;
 
-% SOLUTION VARIABLES
 /*
+SOLUTION VARIABLES
 these are the variables that are summed up and need to be minimized by the solver.
 we can probably implement methods to calculate these values from our custom data structure.
 */
@@ -36,12 +36,16 @@ var int: NUMBER_OF_TECHNICIAN_DAYS;
 var int: NUMBER_OF_TECHNICIANS_USED;
 var int: IDLE_MACHINE_COSTS;
 
+% CUSTOM DATA STRUCTURES
+int: n = 2;
+array[0..days-1, 0..n] of var int: truck;
+array[0..days-1, 0..n] of var int: techn;
 
-% CUSTOM DATA STRUCTURE
-/* TODO */
 
-
-% CONSTRAINTS
+/* * * * * * *
+  CONSTRAINTS
+* * * * * * * * 
+* * * * * * * */
 constraint TRUCK_DISTANCE >= 0;
 constraint NUMBER_OF_TRUCK_DAYS >= 0;
 constraint NUMBER_OF_TRUCKS_USED >= 0;
@@ -49,6 +53,15 @@ constraint TECHNICIAN_DISTANCE >= 0;
 constraint NUMBER_OF_TECHNICIAN_DAYS >= 0;
 constraint NUMBER_OF_TECHNICIANS_USED >= 0;
 constraint IDLE_MACHINE_COSTS >= 0;
+
+constraint % give the days correct IDs - intialize empty ids with -1
+  forall(i in 0..days-1, j in 1..n) (
+    truck[i,0] = i /\
+    truck[i,j] = -1 /\
+    techn[i,0] = i /\
+    techn[i,j] = -1
+  );
+
 
 % SOLVE
 % TODO calculate idle machine costs
