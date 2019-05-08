@@ -19,7 +19,7 @@ enum locations_attr;
 enum requests_attr;
 enum technicians_attr;
 array[int, machines_attr] of int: machines_data;
-array[int, locations_attr] of int: locations_data; 
+array[int, 1..3] of int: locations_data; 
 array[int, requests_attr] of int: requests_data;
 array[int, technicians_attr] of int: technicians_data;
 
@@ -37,7 +37,13 @@ var int: NUMBER_OF_TECHNICIANS_USED;
 var int: IDLE_MACHINE_COSTS;
 
 % CUSTOM DATA STRUCTURES
-% TODO
+% TODO (?)
+
+% CUSTOM FUNCTIONS
+function float: distance(int:a, int:b) = (
+  sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) )
+);
+
 
 /* * * * * * *
   CONSTRAINTS
