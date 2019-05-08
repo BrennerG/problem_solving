@@ -37,10 +37,7 @@ var int: NUMBER_OF_TECHNICIANS_USED;
 var int: IDLE_MACHINE_COSTS;
 
 % CUSTOM DATA STRUCTURES
-int: n = 2;
-array[0..days-1, 0..n] of var int: truck;
-array[0..days-1, 0..n] of var int: techn;
-
+% TODO
 
 /* * * * * * *
   CONSTRAINTS
@@ -53,15 +50,6 @@ constraint TECHNICIAN_DISTANCE >= 0;
 constraint NUMBER_OF_TECHNICIAN_DAYS >= 0;
 constraint NUMBER_OF_TECHNICIANS_USED >= 0;
 constraint IDLE_MACHINE_COSTS >= 0;
-
-constraint % give the days correct IDs - intialize empty ids with -1
-  forall(i in 0..days-1, j in 1..n) (
-    truck[i,0] = i /\
-    truck[i,j] = -1 /\
-    techn[i,0] = i /\
-    techn[i,j] = -1
-  );
-
 
 % SOLVE
 % TODO calculate idle machine costs
