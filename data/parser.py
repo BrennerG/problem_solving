@@ -13,10 +13,10 @@ def parse_lines(lines):
             s1 = splitted_var[1]
             last_heading = s0
 
-            if isinstance(s1, str):
-                out.append("string: %s = %s\n" % (s0, s1))
+            if not s1.isdigit():
+                out.append("%s = \"%s\";\n" % (s0, s1))
             else:
-                out.append("int: %s = %s\n" % (s0, s1))
+                out.append("%s = %s;\n" % (s0.lower(), s1))
         else:
             splitted_array = line.split(" ")
 
@@ -33,7 +33,7 @@ def parse_lines(lines):
         for a in data:
             c = "%s| %s,\n" % (c, ", ".join(a))
 
-        out.append("\n%s_DATA = [\n%s |\n];\n" % (last_heading, c[:-3]));
+        out.append("\n%s_data = [|\n%s|];\n" % (key.lower(), c[2:-2]));
 
     return out
 
