@@ -85,7 +85,7 @@ constraint % day interval allowed
     trucks_assignment[request_id, 2] <= requests_data[request_id, 4]    % day assigned has to be less than delivery_end
   );
 
-constraint % installation day
+constraint % installation day has to be after delivery day
   forall(request_id in 1..requests)(
     technicians_assignment[request_id, 2] > trucks_assignment[request_id, 2]
   );
@@ -94,5 +94,5 @@ constraint % installation day
 % TODO minimize
 solve satisfy;
 
-output ["Trucks:\n"] ++ ["\(row(trucks_assignment, i))\n" | i in 1..requests];
-output ["Technicians:\n"] ++ ["\(row(technicians_assignment, i))\n" | i in 1..requests];
+output ["Trucks:\n"] ++ ["\(i): \(row(trucks_assignment, i))\n" | i in 1..requests];
+output ["Technicians:\n"] ++ ["\(i): \(row(technicians_assignment, i))\n" | i in 1..requests];
