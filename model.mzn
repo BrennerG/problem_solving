@@ -23,7 +23,7 @@ enum technicians_attr;
 array[int, machines_attr] of int: machines_data;
 array[int, 1..3] of int: locations_data; 
 array[int, 1..6] of int: requests_data;
-array[int, technicians_attr] of int: technicians_data;
+array[int, 1..4+machines] of int: technicians_data;
 
 % CUSTOM FUNCTIONS
 function float: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
@@ -45,12 +45,12 @@ var int: IDLE_MACHINE_COSTS;
 */
 
 % DECISION VARIABLES
-% The row index represents the request id
+% The row indeces represent the request id
 % order | day | truck id
 array[1..requests, 1..3] of var int: trucks_assignment;
-% The row index represents the request id
 % order | day | technician id
 array[1..requests, 1..3] of var int: technicians_assignment;
+
 
 /* * * * * * *
   CONSTRAINTS
@@ -88,6 +88,15 @@ constraint % day interval allowed
 constraint % installation day has to be after delivery day
   forall(request_id in 1..requests)(
     technicians_assignment[request_id, 2] > trucks_assignment[request_id, 2]
+  );
+ 
+constraint % technicans skill set
+  forall(req in 1..requests) (
+    forall(mac in 1..machines) (
+      if requests_data[req,5] = mac
+        then technicians_data[technicians_assignment[req,3],4+mac] = 1 
+      endif
+    )
   );
 
 % SOLVE
