@@ -1,9 +1,18 @@
 import sys
+from math import sqrt, ceil
+
+def distance(x1, y1, x2, y2):
+    return sqrt((x1 - x2) ** 2 + (y1 - y2) ** 2)
+
+def distance_by_loc(a, b):
+    [ a_id, a_x, a_y ] = a;
+    [ b_id, b_x, b_y ] = b;
+    return str(ceil(distance(int(a_x), int(a_y), int(b_x), int(b_y))));
 
 def parse_lines(lines):
     out = []
     dicts = {}
-    last_heading = ""
+    last_heading =""
 
     for line in lines:
         splitted_var = line.split(" = ")
@@ -34,6 +43,22 @@ def parse_lines(lines):
             c = "%s| %s,\n" % (c, ", ".join(a))
 
         out.append("\n%s_data = [|\n%s|];\n" % (key.lower(), c[2:-2]));
+
+    distances = {}
+    for loc_1 in dicts["LOCATIONS"]:
+        cur = loc_1[0]
+        distances[cur] = []
+        for loc_2 in dicts["LOCATIONS"]:
+            distances[cur].append(distance_by_loc(loc_1, loc_2));
+
+    dc = ''
+    for loc_1 in distances.keys():
+        data = distances[loc_1]
+        o = ", ".join(data)
+        dc = "%s| %s,\n" % (dc, o)
+
+    out.append("\ndistances_data = [|\n%s|];\n" % (dc[2:-2]));
+
 
     return out
 
