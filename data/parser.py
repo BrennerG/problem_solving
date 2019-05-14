@@ -57,8 +57,7 @@ def parse_lines(lines):
         o = ", ".join(data)
         dc = "%s| %s,\n" % (dc, o)
 
-    out.append("\ndistances_data = [|\n%s|];\n" % (dc[2:-2]));
-
+    out.append("\ndistances = [|\n%s|];\n" % (dc[2:-2]));
 
     return out
 
