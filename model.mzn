@@ -58,8 +58,13 @@ function float: distance(int:a, int:b) = ( % calculates the distance between loc
 function var int: technician_max_travel(var int:id) = technicians_data[id, 3];
 function var int: technician_max_requests(var int:id) = technicians_data[id, 4];
 
-function var int: assignments_day(var int:request_id) = technicians_assignment[request_id, 2];
-function var int: assignments_technician_id(var int:request_id) = technicians_assignment[request_id, 3];
+function var int: request_installation_day(var int:request_id) = technicians_assignment[request_id, 2];
+function var int: request_technician(var int:request_id) = technicians_assignment[request_id, 3];
+
+function var int: request_delivery_order(var int:request_id) = trucks_assignment[request_id, 1];
+function var int: request_delivery_day(var int:request_id) = trucks_assignment[request_id, 2];
+function var int: request_delivery_truck(var int:request_id) = trucks_assignment[request_id, 3];
+
 
 /* * * * * * *
   CONSTRAINTS
@@ -96,8 +101,8 @@ constraint % day interval allowed
 
 constraint % installation day has to be after delivery day
   forall(request_id in 1..requests)(
-    assignments_day(request_id) > trucks_assignment[request_id, 2] /\
-    technicians_workdays[assignments_technician_id(request_id), assignments_day(request_id)] = 1
+    request_installation_day(request_id) > trucks_assignment[request_id, 2] /\
+    technicians_workdays[request_technician(request_id), request_installation_day(request_id)] = 1
   );
 
 constraint % technicians workdays has to be a max series
@@ -112,14 +117,19 @@ constraint % technicians workdays has to be a max series
 
 constraint % technicians max requests per day
   forall(request_id in 1..requests)(
-    sum ([ 1 | r in 1..requests where assignments_day(r) = assignments_day(request_id) ]) <= technician_max_requests(assignments_technician_id(request_id))
+    sum ([ 1 | r in 1..requests where request_installation_day(r) = request_installation_day(request_id) ]) <= technician_max_requests(request_technician(request_id))
+  );
+
+constraint % truck max load per day
+  forall(request_id in 1..requests)(
+    sum ([ 1 | r in 1..requests where request_installation_day(r) = request_installation_day(request_id) ]) <= technician_max_requests(request_technician(request_id))
   );
 
 constraint % technicans skill set
   forall(request_id in 1..requests) (
     forall(machine_id in 1..machines) (
       if requests_data[request_id, 5] = machine_id
-        then technicians_data[assignments_technician_id(request_id), 4 + machine_id] = 1
+        then technicians_data[request_technician(request_id), 4 + machine_id] = 1
       endif
     )
   );
