@@ -20,7 +20,7 @@ enum machines_attr;
 enum locations_attr;
 enum requests_attr;
 enum technicians_attr;
-array[int, machines_attr] of int: machines_data;
+array[int, 1..3] of int: machines_data;
 array[int, 1..3] of int: locations_data; 
 array[int, 1..6] of int: requests_data;
 array[int, 1..4+machines] of int: technicians_data;
@@ -58,12 +58,16 @@ function float: distance(int:a, int:b) = ( % calculates the distance between loc
 function var int: technician_max_travel(var int:id) = technicians_data[id, 3];
 function var int: technician_max_requests(var int:id) = technicians_data[id, 4];
 
+function var int: truck_max_capacity(var int:id) = technicians_data[id, 4];
+
 function var int: request_installation_day(var int:request_id) = technicians_assignment[request_id, 2];
 function var int: request_technician(var int:request_id) = technicians_assignment[request_id, 3];
 
 function var int: request_delivery_order(var int:request_id) = trucks_assignment[request_id, 1];
 function var int: request_delivery_day(var int:request_id) = trucks_assignment[request_id, 2];
 function var int: request_delivery_truck(var int:request_id) = trucks_assignment[request_id, 3];
+
+function var int: request_delivery_size(var int:request_id) = machines_data[requests_data[request_id, 5], 2] * requests_data[request_id, 6];
 
 
 /* * * * * * *
@@ -120,9 +124,11 @@ constraint % technicians max requests per day
     sum ([ 1 | r in 1..requests where request_installation_day(r) = request_installation_day(request_id) ]) <= technician_max_requests(request_technician(request_id))
   );
 
+
 constraint % truck max load per day
   forall(request_id in 1..requests)(
-    sum ([ 1 | r in 1..requests where request_installation_day(r) = request_installation_day(request_id) ]) <= technician_max_requests(request_technician(request_id))
+    sum (r in 1..requests where request_delivery_day(r) = request_delivery_day(request_id) /\ request_delivery_truck(r) = request_delivery_truck(request_id))
+                                                          (machines_data[requests_data[r, 5], 2] * requests_data[r, 6]) <= truck_capacity
   );
 
 constraint % technicans skill set
