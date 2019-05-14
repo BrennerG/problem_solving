@@ -25,7 +25,7 @@ array[int, 1..3] of int: locations_data;
 array[int, 1..6] of int: requests_data;
 array[int, 1..4+machines] of int: technicians_data;
 
-int: max_workdays_series = 5
+int: max_valid_workdays = 5;
 
 % CUSTOM FUNCTIONS
 function float: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
@@ -95,11 +95,14 @@ constraint % installation day has to be after delivery day
   );
 
 constraint % technicians workdays has to be a max series
-  forall(technician_id in 1..technicians)(
-    forall(day in 1..days-max_workdays_series+2) (
-      sum (s in 1..max_workdays_series+2)(technicians_workdays[technician_id, day]]) <= max_workdays_series
+  if days <= max_valid_workdays
+    then true
+    else forall(technician_id in 1..technicians)(
+      forall(day in 1..days-max_valid_workdays-1) (
+        sum (s in 1..max_valid_workdays+1)(technicians_workdays[technician_id, day+s]) <= max_valid_workdays
+      )
     )
-  );
+  endif;
 
 constraint % technicans skill set
   forall(request_id in 1..requests) (
