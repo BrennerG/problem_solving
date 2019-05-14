@@ -25,16 +25,6 @@ array[int, 1..3] of int: locations_data;
 array[int, 1..6] of int: requests_data;
 array[int, 1..4+machines] of int: technicians_data;
 
-int: max_valid_workdays = 5;
-
-% CUSTOM FUNCTIONS
-function float: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
-  sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) )
-);
-
-function var int: technician_max_requests(var int:id) = technicians_data[id, 4];
-
-
 /*
 SOLUTION VARIABLES
 these are the variables that are summed up and need to be minimized by the solver.
@@ -57,6 +47,19 @@ array[1..requests, 1..3] of var int: trucks_assignment;
 array[1..requests, 1..3] of var int: technicians_assignment;
 % days
 array[1..technicians, 1..days] of var 0..1: technicians_workdays;
+
+int: max_valid_workdays = 5;
+
+% CUSTOM FUNCTIONS
+function float: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
+  sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) )
+);
+
+function var int: technician_max_travel(var int:id) = technicians_data[id, 3];
+function var int: technician_max_requests(var int:id) = technicians_data[id, 4];
+
+function var int: assignments_day(var int:request_id) = technicians_assignment[request_id, 2];
+function var int: assignments_technician_id(var int:request_id) = technicians_assignment[request_id, 3];
 
 /* * * * * * *
   CONSTRAINTS
@@ -109,7 +112,7 @@ constraint % technicians workdays has to be a max series
 
 constraint % technicians max requests per day
   forall(request_id in 1..requests)(
-    sum ([1 | r in 1..requests where technicians_assignment[r, 2] = technicians_assignment[request_id, 2]]) <= technician_max_requests(technicians_assignment[request_id, 3])
+    sum ([ 1 | r in 1..requests where assignments_day(r) = assignments_day(request_id) ]) <= technician_max_requests(assignments_technician_id(request_id))
   );
 
 constraint % technicans skill set
