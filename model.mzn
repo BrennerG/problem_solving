@@ -32,6 +32,9 @@ function float: distance(int:a, int:b) = ( % calculates the distance between loc
   sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) )
 );
 
+function var int: technician_max_requests(var int:id) = technicians_data[id, 4];
+
+
 /*
 SOLUTION VARIABLES
 these are the variables that are summed up and need to be minimized by the solver.
@@ -103,6 +106,11 @@ constraint % technicians workdays has to be a max series
       )
     )
   endif;
+
+constraint % technicians max requests per day
+  forall(request_id in 1..requests)(
+    sum ([1 | r in 1..requests where technicians_assignment[r, 2] = technicians_assignment[request_id, 2]]) <= technician_max_requests(technicians_assignment[request_id, 3])
+  );
 
 constraint % technicans skill set
   forall(request_id in 1..requests) (
