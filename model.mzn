@@ -96,8 +96,8 @@ constraint % day interval allowed
 
 constraint % installation day has to be after delivery day
   forall(request_id in 1..requests)(
-    technicians_assignment[request_id, 2] > trucks_assignment[request_id, 2] /\
-    technicians_workdays[technicians_assignment[request_id,3], technicians_assignment[request_id, 2]] = 1
+    assignments_day(request_id) > trucks_assignment[request_id, 2] /\
+    technicians_workdays[assignments_technician_id(request_id), assignments_day(request_id)] = 1
   );
 
 constraint % technicians workdays has to be a max series
@@ -118,8 +118,8 @@ constraint % technicians max requests per day
 constraint % technicans skill set
   forall(request_id in 1..requests) (
     forall(machine_id in 1..machines) (
-      if requests_data[request_id,5] = machine_id
-        then technicians_data[technicians_assignment[request_id,3],4+machine_id] = 1
+      if requests_data[request_id, 5] = machine_id
+        then technicians_data[assignments_technician_id(request_id), 4 + machine_id] = 1
       endif
     )
   );
