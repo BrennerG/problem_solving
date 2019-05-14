@@ -47,12 +47,14 @@ array[1..requests, 1..3] of var int: trucks_assignment;
 array[1..requests, 1..3] of var int: technicians_assignment;
 % days
 array[1..technicians, 1..days] of var 0..1: technicians_workdays;
+% order
+array[1..requests] of var 1..requests: requests_order;
 
 int: max_valid_workdays = 5;
 
 % CUSTOM FUNCTIONS
-function float: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
-  sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) )
+function int: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
+  round(sqrt( pow(locations_data[a,1]-locations_data[b,1],2) + pow(locations_data[a,2]-locations_data[b,2],2) ) + 1)
 );
 
 function var int: technician_max_travel(var int:id) = technicians_data[id, 3];
@@ -89,6 +91,11 @@ constraint % Domain constraints for technician assignment
     (technicians_assignment[request_id, 1] >= 1 /\ technicians_assignment[request_id, 1] <= requests) /\
     (technicians_assignment[request_id, 2] >= 1 /\ technicians_assignment[request_id, 2] <= days) /\
     (technicians_assignment[request_id, 3] >= 1 /\ technicians_assignment[request_id, 3] <= technicians)
+  );
+
+constraint % orders are unique
+  forall(request_id in 1..requests)(
+     requests_order[trucks_assignment[request_id, 1]] = request_id
   );
 
 constraint % orders are unique
@@ -131,6 +138,15 @@ constraint % truck max load per day
                                                           (machines_data[requests_data[r, 5], 2] * requests_data[r, 6]) <= truck_capacity
   );
 
+constraint % truck max travel distance per day
+  forall(request_id in 1..requests)(
+    sum (request_order in 1..requests-1 where trucks_assignment[request_id, 1] = request_order /\
+                                              trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
+                                              trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2])
+        (distance(requests_data[request_id, 2], requests_data[request_order, 2])) <= truck_max_distance
+  );
+
+
 constraint % technicans skill set
   forall(request_id in 1..requests) (
     forall(machine_id in 1..machines) (
@@ -147,3 +163,5 @@ solve satisfy;
 output ["Trucks:\n"] ++ ["\(i): \(row(trucks_assignment, i))\n" | i in 1..requests];
 output ["Technicians:\n"] ++ ["\(i): \(row(technicians_assignment, i))\n" | i in 1..requests];
 output ["Workdays:\n"] ++ ["\(i): \(row(technicians_workdays, i))\n" | i in 1..technicians];
+output ["Order:"] ++ [show(requests_order)];
+
