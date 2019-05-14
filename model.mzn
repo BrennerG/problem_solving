@@ -144,6 +144,24 @@ constraint % truck max travel distance per day
                                               trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
                                               trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2])
         (distance(requests_data[request_id, 2], requests_data[request_order, 2])) <= truck_max_distance
+/*
+            % subtract depot to first location
+            - distance(1, min (request_order in 1..requests)(
+                            if trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
+                               trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2]
+                            then request_order
+                            else zero
+                            endif
+                            ))  -
+            % subtract depot to last location
+            distance(1, max (request_order in 1..requests)(
+                            if trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
+                               trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2]
+                            then request_order
+                            else zero
+                            endif
+                            ))
+*/
   );
 
 
