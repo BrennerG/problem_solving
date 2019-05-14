@@ -50,7 +50,8 @@ var int: IDLE_MACHINE_COSTS;
 array[1..requests, 1..3] of var int: trucks_assignment;
 % order | day | technician id
 array[1..requests, 1..3] of var int: technicians_assignment;
-
+% days
+array[1..technicians, 1..days] of var 0..1: technicians_workdays;
 
 /* * * * * * *
   CONSTRAINTS
@@ -87,14 +88,15 @@ constraint % day interval allowed
 
 constraint % installation day has to be after delivery day
   forall(request_id in 1..requests)(
-    technicians_assignment[request_id, 2] > trucks_assignment[request_id, 2]
+    technicians_assignment[request_id, 2] > trucks_assignment[request_id, 2] /\
+    technicians_workdays[technicians_assignment[request_id,3], technicians_assignment[request_id, 2]] = 1
   );
  
 constraint % technicans skill set
-  forall(req in 1..requests) (
-    forall(mac in 1..machines) (
-      if requests_data[req,5] = mac
-        then technicians_data[technicians_assignment[req,3],4+mac] = 1 
+  forall(request_id in 1..requests) (
+    forall(machine_id in 1..machines) (
+      if requests_data[request_id,5] = machine_id
+        then technicians_data[technicians_assignment[request_id,3],4+machine_id] = 1
       endif
     )
   );
@@ -105,3 +107,4 @@ solve satisfy;
 
 output ["Trucks:\n"] ++ ["\(i): \(row(trucks_assignment, i))\n" | i in 1..requests];
 output ["Technicians:\n"] ++ ["\(i): \(row(technicians_assignment, i))\n" | i in 1..requests];
+output ["Workdays:\n"] ++ ["\(i): \(row(technicians_workdays, i))\n" | i in 1..technicians];
