@@ -109,12 +109,12 @@ constraint % installation day has to be after delivery day
     technicians_workdays[request_technician(request_id), request_installation_day(request_id)] = 1
   );
 
-constraint % technicians workdays has to be a max series
+constraint % technicians has to be 2 days off after a 5 days series
   if days <= max_valid_workdays
     then true
     else forall(technician_id in 1..technicians)(
-      forall(day in 1..days-max_valid_workdays-1) (
-        sum (s in 1..max_valid_workdays+1)(technicians_workdays[technician_id, day+s]) <= max_valid_workdays
+      forall(day in 1..days-max_valid_workdays-2) (
+        sum (s in 1..max_valid_workdays)(technicians_workdays[technician_id, day+s]) = max_valid_workdays /\ sum (h in 1..2)(technicians_workdays[technician_id, day+max_valid_workdays+h]) == 0
       )
     )
   endif;
