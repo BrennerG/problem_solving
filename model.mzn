@@ -159,6 +159,32 @@ constraint % truck max travel distance per day
                             )]
   );
 
+
+constraint % technician max travel distance per day
+% use another array for order of installation ?
+  forall(request_id in 1..requests)(
+    sum (request_order in 1..requests-1 where technicians_assignment[request_id, 1] = request_order /\
+                                              technicians_assignment[request_order, 2] = technicians_assignment[request_id, 2] /\
+                                              technicians_assignment[request_order, 3] = technicians_assignment[request_id, 3] )
+        (distances[requests_data[request_id, 2], requests_data[request_order, 2]]) <= technicians_data[technicians_assignment[request_id, 3], 3]
+            % subtract depot to first location
+            - distances[1, min (request_order in 1..requests)(
+                            if technicians_assignment[request_order, 3] = technicians_assignment[request_id, 3] /\
+                               technicians_assignment[request_order, 2] = technicians_assignment[request_id, 2]
+                            then request_order
+                            else 1
+                            endif
+                            )]  -
+            % subtract depot to last location
+            distances[1, max (request_order in 1..requests)(
+                            if technicians_assignment[request_order, 3] = technicians_assignment[request_id, 3] /\
+                               technicians_assignment[request_order, 2] = technicians_assignment[request_id, 2]
+                            then request_order
+                            else 1
+                            endif
+                            )]
+  );
+
 constraint % technicans skill set
   forall(request_id in 1..requests) (
     forall(machine_id in 1..machines) (

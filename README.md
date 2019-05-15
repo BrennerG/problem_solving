@@ -21,8 +21,8 @@ python3 parser.py VSC2019_EX01.txt ex1.dzn
 - [x] technician and skill set of machine (G)
 - [x] 5 workdays in sequence for technician (P)
 - [x] after 5 day sequence: 2 days off (D)
-- [ ] technician route ends at his home location (G)
-- [ ] technician max travel distance (P)
+- [x] technician route ends at his home location (G)
+- [x] technician max travel distance (P)
 - [x] technician: max requests per day (D)
 
 ## Optional
