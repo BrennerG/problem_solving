@@ -14,7 +14,7 @@ python3 parser.py VSC2019_EX01.txt ex1.dzn
 ## Delivery Constraints
 - [x] delivery window (P)
 - [x] truck load (truck has limited capacity) (D)
-- [ ] truck ends on base and same day (G)
+- [x] truck ends on base and same day (G)
 - [x] truck travel distance limit (P)
 - [x] machine installation not on delivery day (D)
 ## Technician Constraints
