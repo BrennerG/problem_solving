@@ -20,7 +20,7 @@ array[int, 1..3] of int: machines_data;
 array[int, 1..3] of int: locations_data;
 array[int, 1..6] of int: requests_data;
 array[int, 1..4+machines] of int: technicians_data;
-array[1..locations, 1..locations] of int: distances;
+array[1..54, 1..54] of int: distances;
 
 /*
 SOLUTION VARIABLES
@@ -113,7 +113,6 @@ constraint % installation day has to be after delivery day
     technicians_workdays[request_technician(request_id), request_installation_day(request_id)] = 1
   );
 
-
 constraint % technicians has to be 2 days off after a 5 days series
   if days <= max_valid_workdays
     then true
@@ -141,27 +140,24 @@ constraint % truck max travel distance per day
     sum (request_order in 1..requests-1 where trucks_assignment[request_id, 1] = request_order /\
                                               trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
                                               trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2])
-        (distance(requests_data[request_id, 2], requests_data[request_order, 2])) <= truck_max_distance
-/*
+        (distances[requests_data[request_id, 2], requests_data[request_order, 2]]) <= truck_max_distance
             % subtract depot to first location
-            - distance(1, min (request_order in 1..requests)(
+            - distances[1, min (request_order in 1..requests)(
                             if trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
                                trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2]
                             then request_order
-                            else zero
+                            else 1
                             endif
-                            ))  -
+                            )]  -
             % subtract depot to last location
-            distance(1, max (request_order in 1..requests)(
+            distances[1, max (request_order in 1..requests)(
                             if trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
                                trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2]
                             then request_order
-                            else zero
+                            else 1
                             endif
-                            ))
-*/
+                            )]
   );
-
 
 constraint % technicans skill set
   forall(request_id in 1..requests) (
@@ -180,4 +176,3 @@ output ["Trucks:\n"] ++ ["\(i): \(row(trucks_assignment, i))\n" | i in 1..reques
 output ["Technicians:\n"] ++ ["\(i): \(row(technicians_assignment, i))\n" | i in 1..requests];
 output ["Workdays:\n"] ++ ["\(i): \(row(technicians_workdays, i))\n" | i in 1..technicians];
 output ["Order:"] ++ [show(requests_order)];
-
