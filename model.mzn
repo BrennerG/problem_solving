@@ -16,10 +16,6 @@ int: machines;
 int: locations;
 int: requests;
 int: technicians;
-enum machines_attr;
-enum locations_attr;
-enum requests_attr;
-enum technicians_attr;
 array[int, 1..3] of int: machines_data;
 array[int, 1..3] of int: locations_data;
 array[int, 1..6] of int: requests_data;
@@ -116,6 +112,7 @@ constraint % installation day has to be after delivery day
     request_installation_day(request_id) > trucks_assignment[request_id, 2] /\
     technicians_workdays[request_technician(request_id), request_installation_day(request_id)] = 1
   );
+
 
 constraint % technicians has to be 2 days off after a 5 days series
   if days <= max_valid_workdays
