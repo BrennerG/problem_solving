@@ -112,34 +112,34 @@ constraint % installation day has to be after delivery day
     request_installation_day(request) > request_delivery_day(request)
   );
 
-constraint % workdays and technicians assignment matrix channeling
-  forall(request in 1..requests, technician in 1..technicians, day in 1..days)(
-    (technicians_assignment[request, 2] = day /\ technicians_assignment[request, 3] = technician) <->
-    technicians_workdays[technician, day] = 1
+constraint
+  forall(technician in 1..technicians, day in 1..days)(
+    if sum(request in 1..requests where
+      technicians_assignment[request, 2] = day /\
+      technicians_assignment[request, 3] = technician)(1) = 0
+    then technicians_workdays[technician, day] = 0
+    else technicians_workdays[technician, day] = 1
+    endif
   );
-
 
 constraint % technicians has to be 2 days off after a 5 days series
   if days <= max_valid_workdays
     then true
-    else forall(technician_id in 1..technicians)(
-      forall(day in 1..days - max_valid_workdays - 1)(
-        sum(s in 0..max_valid_workdays - 1)(technicians_workdays[technician_id, day + s]) = max_valid_workdays ->
-        sum(h in 0..1)(technicians_workdays[technician_id, day + max_valid_workdays + h]) = 0
-      )
+    else forall(technician_id in 1..technicians, day in 1..days - max_valid_workdays)(
+      sum(s in 0..max_valid_workdays - 1)(technicians_workdays[technician_id, day + s]) = max_valid_workdays ->
+      if day = days - max_valid_workdays
+      then technicians_workdays[technician_id, day + max_valid_workdays] = 0
+      else sum(h in 0..1)(technicians_workdays[technician_id, day + max_valid_workdays + h]) = 0
+      endif
     )
   endif;
 
-% Some constraint causes the requests not to be split among the technicians.
-% The following constraint should be correct, but fails due to some other unknown reason.
-/*
 constraint % technicians max requests per day
   forall(technician in 1..technicians, day in 1..days)(
     sum(request in 1..requests where
       technicians_assignment[request, 2] = day /\
       technicians_assignment[request, 3] = technician)(1) <= technician_max_requests(technician)
   );
-*/
 
 /*
 constraint % truck max load per day
@@ -198,6 +198,7 @@ constraint % technician max travel distance per day
                             endif
                             )]
   );
+*/
 
 constraint % technicans skill set
   forall(request_id in 1..requests) (
@@ -207,7 +208,6 @@ constraint % technicans skill set
       endif
     )
   );
-*/
 
 % SOLVE
 % TODO minimize
