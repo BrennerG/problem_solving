@@ -141,14 +141,14 @@ constraint % technicians max requests per day
       technicians_assignment[request, 3] = technician)(1) <= technician_max_requests(technician)
   );
 
-/*
-constraint % truck max load per day
-  forall(request_id in 1..requests)(
-    sum (r in 1..requests where request_delivery_day(r) = request_delivery_day(request_id) /\ request_delivery_truck(r) = request_delivery_truck(request_id))
-                                                          (machines_data[requests_data[r, 5], 2] * requests_data[r, 6]) <= truck_capacity
+constraint % trucks max load
+  forall(t in 1..requests, day in 1..days)(
+    sum(r in 1..requests where
+      trucks_assignment[r,2] = day /\
+      trucks_assignment[r,3] = t)
+        (machines_data[requests_data[r,5],2]*requests_data[r,6]) <= truck_capacity
   );
-
-
+/*
 constraint % truck max travel distance per day
   forall(request_id in 1..requests)(
     sum (request_order in 1..requests-1 where trucks_assignment[request_id, 1] = request_order /\
