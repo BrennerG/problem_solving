@@ -98,7 +98,7 @@ constraint % installation day has to be after delivery day
     request_installation_day(request) > request_delivery_day(request)
   );
 
-constraint
+constraint % channel technicians_assignment day with technician_workdays
   forall(technician in 1..technicians, day in 1..days)(
     if sum(request in 1..requests where
       technicians_assignment[request, 2] = day /\
