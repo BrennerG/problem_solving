@@ -20,7 +20,7 @@ array[int, 1..3] of int: machines_data;
 array[int, 1..3] of int: locations_data;
 array[int, 1..6] of int: requests_data;
 array[int, 1..4+machines] of int: technicians_data;
-array[1..54, 1..54] of int: distances;
+array[1..locations, 1..locations] of int: distances;
 
 % DECISION VARIABLES
 % The row indeces represent the request id
