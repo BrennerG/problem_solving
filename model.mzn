@@ -22,20 +22,6 @@ array[int, 1..6] of int: requests_data;
 array[int, 1..4+machines] of int: technicians_data;
 array[1..54, 1..54] of int: distances;
 
-/*
-SOLUTION VARIABLES
-these are the variables that are summed up and need to be minimized by the solver.
-we can probably implement methods to calculate these values from our custom data structure.
-
-var int: TRUCK_DISTANCE;
-var int: NUMBER_OF_TRUCK_DAYS;
-var int: NUMBER_OF_TRUCKS_USED;
-var int: TECHNICIAN_DISTANCE;
-var int: NUMBER_OF_TECHNICIAN_DAYS;
-var int: NUMBER_OF_TECHNICIANS_USED;
-var int: IDLE_MACHINE_COSTS;
-*/
-
 % DECISION VARIABLES
 % The row indeces represent the request id
 % order | day | truck id
@@ -46,8 +32,8 @@ array[1..requests, 1..3] of var int: technicians_assignment;
 array[1..technicians, 1..days] of var 0..1: technicians_workdays;
 % order
 array[1..requests] of var 1..requests: requests_order;
-
 int: max_valid_workdays = 5;
+var int: cost;
 
 % CUSTOM FUNCTIONS
 function int: distance(int:a, int:b) = ( % calculates the distance between location with id a and location with id b
@@ -148,13 +134,23 @@ constraint % trucks max load
       trucks_assignment[r,3] = t)
         (machines_data[requests_data[r,5],2]*requests_data[r,6]) <= truck_capacity
   );
-/*
+  
+constraint % technicans skill set
+  forall(request_id in 1..requests) (
+    forall(machine_id in 1..machines) (
+      if requests_data[request_id, 5] = machine_id
+        then technicians_data[request_technician(request_id), 4 + machine_id] = 1
+      endif
+    )
+  );  
+  
 constraint % truck max travel distance per day
   forall(request_id in 1..requests)(
     sum (request_order in 1..requests-1 where trucks_assignment[request_id, 1] = request_order /\
                                               trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
-                                              trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2])
+                                              trucks_assignment[request_order, 2] = trucks_assignment[request_id, 2])                                            
         (distances[requests_data[request_id, 2], requests_data[request_order, 2]]) <= truck_max_distance
+         /*
             % subtract depot to first location
             - distances[1, min (request_order in 1..requests)(
                             if trucks_assignment[request_order, 3] = trucks_assignment[request_id, 3] /\
@@ -171,8 +167,8 @@ constraint % truck max travel distance per day
                             else 1
                             endif
                             )]
+                            */
   );
-
 
 constraint % technician max travel distance per day
 % use another array for order of installation ?
@@ -181,6 +177,7 @@ constraint % technician max travel distance per day
                                               technicians_assignment[request_order, 2] = technicians_assignment[request_id, 2] /\
                                               technicians_assignment[request_order, 3] = technicians_assignment[request_id, 3] )
         (distances[requests_data[request_id, 2], requests_data[request_order, 2]]) <= technicians_data[technicians_assignment[request_id, 3], 3]
+        /*
             % subtract depot to first location
             - distances[1, min (request_order in 1..requests)(
                             if technicians_assignment[request_order, 3] = technicians_assignment[request_id, 3] /\
@@ -197,23 +194,28 @@ constraint % technician max travel distance per day
                             else 1
                             endif
                             )]
-  );
-*/
-
-constraint % technicans skill set
-  forall(request_id in 1..requests) (
-    forall(machine_id in 1..machines) (
-      if requests_data[request_id, 5] = machine_id
-        then technicians_data[request_technician(request_id), 4 + machine_id] = 1
-      endif
-    )
+                            */
   );
 
-% SOLVE
-% TODO minimize
+constraint % cost
+  (
+  % truck for horizon
+  %nvalue(col(trucks_assignment,3)) * truck_cost +
+  % tech for horizon
+  %nvalue(col(technician_assignment,3)) * technician_cost +
+  % techs per day
+  %sum(t in 1..technicians, r in 1..requests where technicians_assignment[r,3] = t)(1) * technician_cost +
+  % trucks per day
+  %sum(t in 1..requests, r in 1..requests where trucks_assignment[r,3] = t)(1) * truck_day_cost + 
+  % truck distance TODO 
+  % technician distance TODO
+  % idle machine costs TODO
+  0
+  ) = cost; 
+
 solve satisfy;
-
 output ["Trucks:\n"] ++ ["\(i): \(row(trucks_assignment, i))\n" | i in 1..requests];
 output ["Technicians:\n"] ++ ["\(i): \(row(technicians_assignment, i))\n" | i in 1..requests];
 output ["Workdays:\n"] ++ ["\(i): \(row(technicians_workdays, i))\n" | i in 1..technicians];
-output ["Order:"] ++ [show(requests_order)];
+output ["Order:"] ++ [show(requests_order)] ++ ["\n"];
+output ["Cost:"] ++ [show(cost)] ++ ["\n"];
