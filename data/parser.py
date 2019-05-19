@@ -32,7 +32,8 @@ def parse_lines(lines):
                 out.append("%s = %s;\n" % (s0.lower(), s1))
         else:
             splitted_array = re.split("\s+", line)
-            splitted_array.remove("")
+            if "" in splitted_array:
+                splitted_array.remove("")
 
             if len(splitted_array) > 1:
                 if not last_heading in dicts:
