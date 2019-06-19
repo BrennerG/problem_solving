@@ -98,10 +98,3 @@ def evaluate(solution, all_edges):
         return math.inf
     else:
         return len(solution)
-
-
-if __name__ == '__main__':
-    search(10, {frozenset([1, 2]), frozenset([2, 4]), frozenset([2, 6]),
-                frozenset([4, 3]), frozenset([4, 5]),
-                frozenset([3, 7]), frozenset([3, 8]),
-                frozenset([7, 8]), frozenset([7, 9]), frozenset([7, 10])})
