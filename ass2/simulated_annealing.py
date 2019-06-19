@@ -3,10 +3,8 @@ import random
 
 from util import current_milli_time
 
-random.seed(1)
 
-
-def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1):
+def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1, seed=1):
     """
     Starts search for solution using Simulated Annealing.
 
@@ -14,8 +12,13 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1):
     :param edges: all edges
     :param max_running_time: the time stopping criterion for the algorithm in milliseconds
     :param max_temperature: the maximum (starting) temperature
+    :param seed: seed for RNG
     :return: the best solution that was found
     """
+    print('Started search, will stop in %d(ms)...' % max_running_time)
+    random.seed(seed)
+    evaluations = []
+
     current_solution = create_initial_solution(number_of_vertices)
     best_solution = current_solution
     start_time = current_milli_time()
@@ -26,12 +29,14 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1):
         eval_neighbor = evaluate(neighbor, edges)
         if eval_neighbor < eval_current:
             current_solution = neighbor
+            evaluations.append(len(current_solution))
             if eval_neighbor < evaluate(best_solution, edges):
                 best_solution = neighbor
-                print('Improved solution found. Eval: %d' % len(best_solution))
         elif math.e ** ((eval_current - eval_neighbor) / temperature) > random.random():
             current_solution = neighbor
-    return best_solution
+            evaluations.append(len(current_solution))
+    print('Finished search. Best solution length: %d' % len(best_solution))
+    return best_solution, evaluations
 
 
 def calculate_temp(max_temp, start_time, current_time, max_running_time):
