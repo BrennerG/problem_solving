@@ -3,11 +3,10 @@ import random
 
 from util import current_milli_time
 
-SEED = 1
-random.seed(SEED)
+random.seed(1)
 
 
-def search(number_of_vertices, edges, max_running_time=1000, max_temperature=100000):
+def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1):
     """
     Starts search for solution using Simulated Annealing.
 
@@ -15,7 +14,7 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=100
     :param edges: all edges
     :param max_running_time: the time stopping criterion for the algorithm in milliseconds
     :param max_temperature: the maximum (starting) temperature
-    :return: the best found solution
+    :return: the best solution that was found
     """
     current_solution = create_initial_solution(number_of_vertices)
     best_solution = current_solution
@@ -29,7 +28,7 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=100
             current_solution = neighbor
             if eval_neighbor < evaluate(best_solution, edges):
                 best_solution = neighbor
-                print('Better solution found: ', best_solution)
+                print('Improved solution found. Eval: %d' % len(best_solution))
         elif math.e ** ((eval_current - eval_neighbor) / temperature) > random.random():
             current_solution = neighbor
     return best_solution
@@ -46,7 +45,7 @@ def calculate_temp(max_temp, start_time, current_time, max_running_time):
     :param max_running_time: the max running time in milliseconds
     :return: a decreased temperature
     """
-    return (0.00000001 - max_temp) * (current_time - start_time) / max_running_time + max_temp
+    return (0.00000000000000001 - max_temp) * (current_time - start_time) / max_running_time + max_temp
 
 
 def create_initial_solution(number_of_vertices):
@@ -89,12 +88,12 @@ def evaluate(solution, all_edges):
     :param all_edges: a set of sets containing two integers
     :return: infinity if no valid solution, otherwise number of elements
     """
-    solution_edges = set()
+    covered_edges = set()
     for v in solution:
         for e in all_edges:
             if v in e:
-                solution_edges.add(e)
-    if solution_edges != all_edges:
+                covered_edges.add(e)
+    if covered_edges != all_edges:
         return math.inf
     else:
         return len(solution)
