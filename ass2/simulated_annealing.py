@@ -44,10 +44,10 @@ def calculate_temp(max_temp, start_time, current_time, max_running_time):
     Returns the current temperature which is proportional to the time elapsed
     and the time stopping criterion.
 
-    :param max_temp: the current temperature
+    :param max_temp: the maximum (starting) temperature
     :param start_time: the time the algorithm started in milliseconds
     :param current_time: the current time in milliseconds
-    :param max_running_time: the max running time in milliseconds
+    :param max_running_time: the max runtime in milliseconds
     :return: a decreased temperature
     """
     return (0.00000000000000001 - max_temp) * (current_time - start_time) / max_running_time + max_temp
