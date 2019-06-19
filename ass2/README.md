@@ -21,3 +21,4 @@ example: T = old_T * 0.98
 [] Evaluation
 [] Cooling Function
 [] Termination Criterion
+[] CMD Interface
