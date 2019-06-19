@@ -13,7 +13,7 @@ def plot_evaluations(instance_name, nr_nodes, evaluations, best_evaluation, runt
                       r'$\mathrm{Improvement}= %.2f\%%$' % ((nr_nodes - best_evaluation) / nr_nodes * 100)))
     fig, ax = plt.subplots()
     ax.plot(evaluations)
-    ax.set(xlabel='Change iterations', ylabel='# of vertices', title=('Solutions for instance %s' % instance_name))
+    ax.set(xlabel='Iterations', ylabel='# of vertices', title=('Solutions for instance %s' % instance_name))
     ax.text(0.55, 0.95, text, transform=ax.transAxes, fontsize=14, verticalalignment='top', bbox=props)
     plt.show()
 

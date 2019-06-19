@@ -29,12 +29,11 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1, 
         eval_neighbor = evaluate(neighbor, edges)
         if eval_neighbor < eval_current:
             current_solution = neighbor
-            evaluations.append(len(current_solution))
             if eval_neighbor < evaluate(best_solution, edges):
                 best_solution = neighbor
         elif math.e ** ((eval_current - eval_neighbor) / temperature) > random.random():
             current_solution = neighbor
-            evaluations.append(len(current_solution))
+        evaluations.append(len(current_solution))
     print('Finished search. Best solution length: %d' % len(best_solution))
     return best_solution, evaluations
 
