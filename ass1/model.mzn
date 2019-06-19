@@ -1,3 +1,10 @@
+/*
+ * Authors:
+ * David Neubauer, 11718233
+ * Gabriel Breiner, 01447920
+ * Philippos Gorgoris, 01128004
+ */
+
 include "globals.mzn";
 
 % DATA FROM .DZN
