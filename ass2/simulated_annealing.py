@@ -16,7 +16,7 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1, 
     :return: the best solution that was found
     """
     print('Started search, will stop in %d(ms)...' % max_running_time)
-    random.seed(seed, version=2)
+    random.seed(seed)
     evaluations = []
 
     current_solution = create_initial_solution(number_of_vertices)
