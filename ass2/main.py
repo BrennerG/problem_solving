@@ -105,5 +105,3 @@ if __name__ == '__main__':
         # Plot best solution evaluations
         plot_evaluations(filename, nr_nodes, len(edges), overall_best['evaluation_list'], overall_best['evaluation'],
                          runtime, max_temperature, overall_best['seed'], show=False)
-
-        break
