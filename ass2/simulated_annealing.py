@@ -19,7 +19,7 @@ def search(number_of_vertices, edges, max_running_time=1000, max_temperature=1, 
     random.seed(seed)
     evaluations = []
 
-    current_solution = create_initial_solution(number_of_vertices)
+    current_solution = create_initial_solution(edges)
     best_solution = current_solution
     start_time = current_milli_time()
     while current_milli_time() - start_time < max_running_time:
@@ -52,16 +52,20 @@ def calculate_temp(max_temp, start_time, current_time, max_running_time):
     return (0.00000000000000001 - max_temp) * (current_time - start_time) / max_running_time + max_temp
 
 
-def create_initial_solution(number_of_vertices):
+def create_initial_solution(edges):
     """
-    Returns an initial solution which contains all vertices.
+    Creates an initial solution.
 
-    :param number_of_vertices: the total number of vertices
+    :param edges: the edges of the graph
     :return: a set of integers
     """
     initial_solution = set()
-    for i in range(1, number_of_vertices + 1):
-        initial_solution.add(i)
+    edges_copy = edges.copy()
+    while len(edges_copy) != 0:
+        rand_edge = random.choice(tuple(edges_copy))
+        initial_solution = initial_solution.union(rand_edge)
+        edges_copy.remove(rand_edge)
+        edges_copy = [e for e in edges_copy if not (tuple(rand_edge)[0] in e or tuple(rand_edge)[1] in e)]
     return initial_solution
 
 

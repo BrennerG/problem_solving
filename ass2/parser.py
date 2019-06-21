@@ -19,7 +19,7 @@ def load(file: str):
     # GET DATA
     nr_nodes = int(data[0].split(' ')[2])
     nr_edges = int(data[0].split(' ')[3])
-    edges = frozenset(frozenset(map(int, x.split(' '))) for x in data[1:])
+    edges = set(frozenset(map(int, x.split(' '))) for x in data[1:])
 
     # TODO nr_edges != len(edges)... probably double edges?
 
