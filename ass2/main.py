@@ -54,7 +54,8 @@ if __name__ == '__main__':
 
         nr_nodes, edges = load(filename)
         best_solution, evaluation_list = search(nr_nodes, edges, runtime, max_temperature, seed)
-        plot_evaluations(filename, nr_nodes, evaluation_list, len(best_solution), runtime, max_temperature, seed)
+        plot_evaluations(filename, nr_nodes, len(edges), evaluation_list, len(best_solution), runtime,
+                         max_temperature, seed)
         exit(0)
 
     """
